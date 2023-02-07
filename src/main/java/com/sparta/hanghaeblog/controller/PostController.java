@@ -3,9 +3,7 @@ package com.sparta.hanghaeblog.controller;
 
 import com.sparta.hanghaeblog.Dto.PostRequestDto;
 import com.sparta.hanghaeblog.Dto.PostResponseDto;
-import com.sparta.hanghaeblog.entitiy.Post;
 import com.sparta.hanghaeblog.service.PostService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,13 +17,13 @@ public class PostController {
 
     //게시글 작성
     @PostMapping("api/posts")
-    public Post createPost(@RequestBody PostRequestDto requestDtd) {
+    public String createPost(@RequestBody PostRequestDto requestDtd) {
         return postService.createPost(requestDtd);
     }
 
     //게시글 전체 조회
     @GetMapping("api/posts")
-    public List<Post> getPosts(){
+    public List<PostResponseDto> getPosts(){
         return postService.getPosts();
     }
     //선택한 게시글 조회
