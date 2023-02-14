@@ -35,8 +35,8 @@ public class PostController {
 
     //게시글 수정
     @PutMapping("api/posts/{id}")
-    public String updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto){
-        return postService.update(id, requestDto);
+    public PostResponseDto updatePost(@RequestBody PostRequestDto requestDto, HttpServletRequest request){
+        return postService.update(requestDto, request);
     }
 
     //게시글 삭제

@@ -41,11 +41,10 @@ public class PostService {
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
-            Post post = postRepository.saveAndFlush(new Post(requestDto));
+            Post post = postRepository.saveAndFlush(new Post(requestDto, user));
             return new PostResponseDto(post);
-        } else {
-            return null;
         }
+        return null;
     }
 
 
@@ -72,15 +71,28 @@ public class PostService {
 
     //게시글 수정
     @Transactional
-    public String update(Long id, PostRequestDto requestDto) {
-        Post post = postRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 게시글입니다.")
-        );
-        if(requestDto.getPassword().equals(post.getPassword())){
+    public PostResponseDto update(PostRequestDto requestDto, HttpServletRequest request) {
+
+        String token = jwtUtil.resolveToken(request);
+        Claims claims;
+
+        if (token != null) {
+            if (jwtUtil.validateToken(token)) {
+                claims = jwtUtil.getUserInfoFromToken(token);
+            } else {
+                throw new IllegalArgumentException("Token Error");
+            }
+
+            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
+                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+            );
+            Post post = postRepository.findById(user.getId()).orElseThrow(
+                    () -> new IllegalArgumentException("존재하지 않는 게시글입니다.")
+            );
             post.update(requestDto);
-            return "게시글이 수정되었습니다.";
+            return new PostResponseDto(post);
         }
-        return "비밀번호가 일치하지 않습니다.";
+        return null;
     }
 
 
