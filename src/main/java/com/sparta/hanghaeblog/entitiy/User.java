@@ -6,6 +6,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
 @Entity(name = "users")
@@ -20,6 +23,9 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+
+    @OneToMany
+    List<Post> userPosts = new ArrayList<>();
 
     public User(SignupRequestDto signupRequestDto){
         username = signupRequestDto.getUsername();

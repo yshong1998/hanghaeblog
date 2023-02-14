@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Entity
+@Entity(name = "post")
 @NoArgsConstructor
 public class Post extends Timestamped {
 
@@ -23,12 +23,16 @@ public class Post extends Timestamped {
     private String contents;
     @Column(nullable = false)
     private String password;
+    @ManyToOne
+    @JoinColumn(name = "USER_ID", nullable = false)
+    private User user;
 
-    public Post(PostRequestDto requestDto) {
+    public Post(PostRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();
         this.writer = requestDto.getWriter();
         this.contents = requestDto.getContents();
         this.password = requestDto.getPassword();
+        this.user = user;
     }
 
     public void update(PostRequestDto requestDto) {
