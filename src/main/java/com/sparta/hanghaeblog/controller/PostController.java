@@ -17,8 +17,8 @@ public class PostController {
 
     //게시글 작성
     @PostMapping("api/posts")
-    public String createPost(@RequestBody PostRequestDto requestDtd) {
-        return postService.createPost(requestDtd);
+    public String createPost(@RequestBody PostRequestDto requestDto) {
+        return postService.createPost(requestDto);
     }
 
     //게시글 전체 조회
