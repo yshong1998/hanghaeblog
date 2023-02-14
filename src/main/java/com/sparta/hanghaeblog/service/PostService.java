@@ -3,8 +3,13 @@ package com.sparta.hanghaeblog.service;
 import com.sparta.hanghaeblog.Dto.PostRequestDto;
 import com.sparta.hanghaeblog.Dto.PostResponseDto;
 import com.sparta.hanghaeblog.entitiy.Post;
+import com.sparta.hanghaeblog.entitiy.User;
+import com.sparta.hanghaeblog.jwt.JwtUtil;
 import com.sparta.hanghaeblog.repository.PostRepository;
 
+import com.sparta.hanghaeblog.repository.UserRepository;
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,14 +21,31 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
+    private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
 
 
     //게시글 작성
     @Transactional
-    public String createPost(PostRequestDto requestDto) {
-        Post post = new Post(requestDto);
-        postRepository.save(post);
-        return "게시물이 업로드 되었습니다.";
+    public PostResponseDto createPost(PostRequestDto requestDto, HttpServletRequest request) {
+        String token = jwtUtil.resolveToken(request);
+        Claims claims;
+
+        if (token != null) {
+            if (jwtUtil.validateToken(token)) {
+                claims = jwtUtil.getUserInfoFromToken(token);
+            } else {
+                throw new IllegalArgumentException("Token Error");
+            }
+
+            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
+                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+            );
+            Post post = postRepository.saveAndFlush(new Post(requestDto));
+            return new PostResponseDto(post);
+        } else {
+            return null;
+        }
     }
 
 
