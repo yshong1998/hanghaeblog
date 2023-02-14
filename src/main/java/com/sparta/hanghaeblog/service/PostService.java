@@ -2,6 +2,7 @@ package com.sparta.hanghaeblog.service;
 
 import com.sparta.hanghaeblog.Dto.PostRequestDto;
 import com.sparta.hanghaeblog.Dto.PostResponseDto;
+import com.sparta.hanghaeblog.entitiy.Message;
 import com.sparta.hanghaeblog.entitiy.Post;
 import com.sparta.hanghaeblog.entitiy.User;
 import com.sparta.hanghaeblog.jwt.JwtUtil;
@@ -98,14 +99,26 @@ public class PostService {
 
     //게시글 삭제
     @Transactional
-    public String deletePost(Long id, PostRequestDto requestDto) {
-        Post post = postRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 게시글입니다.")
-        );
-        if(requestDto.getPassword().equals(post.getPassword())){
-            postRepository.deleteById(id);
-            return "게시글이 삭제되었습니다.";
+    public Message deletePost(HttpServletRequest request) {
+        String token = jwtUtil.resolveToken(request);
+        Claims claims;
+
+        if (token != null) {
+            if (jwtUtil.validateToken(token)) {
+                claims = jwtUtil.getUserInfoFromToken(token);
+            } else {
+                throw new IllegalArgumentException("Token Error");
+            }
+
+            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
+                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+            );
+            Post post = postRepository.findById(user.getId()).orElseThrow(
+                    () -> new IllegalArgumentException("존재하지 않는 게시글입니다.")
+            );
+            postRepository.deleteById(post.getId());
+            return new Message(200,"delete success");
         }
-        return "비밀번호가 일치하지 않습니다.";
+        return null;
     }
 }

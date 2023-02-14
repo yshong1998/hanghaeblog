@@ -3,6 +3,7 @@ package com.sparta.hanghaeblog.controller;
 
 import com.sparta.hanghaeblog.Dto.PostRequestDto;
 import com.sparta.hanghaeblog.Dto.PostResponseDto;
+import com.sparta.hanghaeblog.entitiy.Message;
 import com.sparta.hanghaeblog.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -34,14 +35,14 @@ public class PostController {
     }
 
     //게시글 수정
-    @PutMapping("api/posts/{id}")
+    @PutMapping("api/posts")
     public PostResponseDto updatePost(@RequestBody PostRequestDto requestDto, HttpServletRequest request){
         return postService.update(requestDto, request);
     }
 
     //게시글 삭제
-    @DeleteMapping("/api/posts/{id}")
-    public String deletePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto){
-        return postService.deletePost(id,requestDto);
+    @DeleteMapping("/api/posts")
+    public Message deletePost(HttpServletRequest request){
+        return postService.deletePost(request);
     }
 }
