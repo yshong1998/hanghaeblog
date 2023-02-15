@@ -77,7 +77,7 @@ public class PostService {
 
     //게시글 수정
     @Transactional
-    public PostResponseDto update(PostRequestDto requestDto, HttpServletRequest request) {
+    public PostResponseDto update(Long id, PostRequestDto requestDto, HttpServletRequest request) {
 
         String token = jwtUtil.resolveToken(request);
         Claims claims;
@@ -91,7 +91,7 @@ public class PostService {
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
-            Post post = postRepository.findById(user.getId()).orElseThrow(
+            Post post = postRepository.findById(id).orElseThrow(
                     () -> new IllegalArgumentException("존재하지 않는 게시글입니다.")
             );
             post.update(requestDto);
@@ -103,7 +103,7 @@ public class PostService {
 
     //게시글 삭제
     @Transactional
-    public ResponseEntity<Message> deletePost(HttpServletRequest request) {
+    public ResponseEntity<Message> deletePost(Long id, HttpServletRequest request) {
         String token = jwtUtil.resolveToken(request);
         Claims claims;
 
@@ -117,7 +117,7 @@ public class PostService {
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
-            Post post = postRepository.findById(user.getId()).orElseThrow(
+            Post post = postRepository.findById(id).orElseThrow(
                     () -> new IllegalArgumentException("존재하지 않는 게시글입니다.")
             );
             postRepository.deleteById(post.getId());

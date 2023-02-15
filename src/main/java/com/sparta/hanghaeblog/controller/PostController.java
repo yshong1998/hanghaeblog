@@ -37,14 +37,14 @@ public class PostController {
     }
 
     //게시글 수정
-    @PutMapping("api/posts")
-    public PostResponseDto updatePost(@RequestBody PostRequestDto requestDto, HttpServletRequest request){
-        return postService.update(requestDto, request);
+    @PutMapping("api/posts/{id}")
+    public PostResponseDto updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto, HttpServletRequest request){
+        return postService.update(id, requestDto, request);
     }
 
     //게시글 삭제
-    @DeleteMapping("/api/posts")
-    public ResponseEntity<Message> deletePost(HttpServletRequest request){
-        return postService.deletePost(request);
+    @DeleteMapping("/api/posts/{id}")
+    public ResponseEntity<Message> deletePost(@PathVariable Long id, HttpServletRequest request){
+        return postService.deletePost(id, request);
     }
 }
