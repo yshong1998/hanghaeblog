@@ -5,8 +5,12 @@ import com.sparta.hanghaeblog.Dto.PostRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.Collection;
 
 @Getter
+@Setter
 @Entity(name = "post")
 @NoArgsConstructor
 public class Post extends Timestamped {
@@ -19,8 +23,11 @@ public class Post extends Timestamped {
     @Column(nullable = false)
     private String contents;
     @ManyToOne
-    @JoinColumn(name = "USER_ID", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @OneToMany(mappedBy = "post")
+    private Collection<Comment> comment;
 
     public Post(PostRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();

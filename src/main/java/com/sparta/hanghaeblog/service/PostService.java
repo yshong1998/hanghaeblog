@@ -33,8 +33,7 @@ public class PostService {
     @Transactional
     public ResponseEntity<PostResponseDto> createPost(PostRequestDto requestDto, HttpServletRequest request) {
         String token = jwtUtil.resolveToken(request);
-        checkTokenNull(token);
-        Claims claims = getTokenClaims(token);
+        Claims claims = jwtUtil.getTokenClaims(token);
         User user = findUserByTokenClaims(claims);
         Post post = postRepository.saveAndFlush(new Post(requestDto, user));
         return ResponseEntity.ok()
@@ -67,8 +66,7 @@ public class PostService {
     @Transactional
     public ResponseEntity<PostResponseDto> update(Long id, PostRequestDto requestDto, HttpServletRequest request) {
         String token = jwtUtil.resolveToken(request);
-        checkTokenNull(token);
-        Claims claims = getTokenClaims(token);
+        Claims claims = jwtUtil.getTokenClaims(token);
         User user = findUserByTokenClaims(claims);
         Post post = getPostById(id);
         if (user.getRole().equals(UserRoleEnum.ADMIN) || user.getId().equals(post.getUser().getId())) {
@@ -82,8 +80,7 @@ public class PostService {
     @Transactional
     public ResponseEntity<Message> deletePost(Long id, HttpServletRequest request) {
         String token = jwtUtil.resolveToken(request);
-        checkTokenNull(token);
-        Claims claims = getTokenClaims(token);
+        Claims claims = jwtUtil.getTokenClaims(token);
         User user = findUserByTokenClaims(claims);
         Post post = getPostById(id);
         if (user.getRole().equals(UserRoleEnum.ADMIN) || user.getId().equals(post.getUser().getId())) {
@@ -91,22 +88,6 @@ public class PostService {
         }
         return ResponseEntity.ok()
                 .body(new Message(HttpStatus.OK.value(), "delete success"));
-    }
-
-    private void checkTokenNull(String token) {
-        if (token == null) {
-            throw new IllegalArgumentException("토큰이 존재하지 않습니다.");
-        }
-    }
-
-    private Claims getTokenClaims(String token) {
-        Claims claims;
-        if (jwtUtil.validateToken(token)) {
-            claims = jwtUtil.getUserInfoFromToken(token);
-        } else {
-            throw new IllegalArgumentException("Token Error");
-        }
-        return claims;
     }
 
     private User findUserByTokenClaims(Claims claims) {
