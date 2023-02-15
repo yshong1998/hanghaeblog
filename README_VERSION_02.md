@@ -29,10 +29,10 @@
 | 회원 가입     | Post   | /api/user/signup | {"username": "username", "password": "password"}             | {"statusCode": 200,"responseMessage": "signup success"}                                             |
 | 로그인       | Post   | /api/user/login  | {"username": "username", "password": "password"}             | {"statusCode": 200,"responseMessage": "login success"}                                              |
 | 전체 게시글 조회 | GET    | /api/posts       |                                                              | [{"title": "title","username": "username","contents": " contents","uploadTime": "uploadTime"}]      |
-| 특정 게시글 조회 | GET    | /api/posts       |                                                              | {"title": "title 1", "username": "username", "contents": " contents 1", "uploadTime": "uploadTime"} |
-| 게시글 작성    | POST   | api/posts/{id}   | {"title" : "title", "contents" : "contents"}                 | {"title": "title 1", "username": "username", "contents": " contents 1", "uploadTime": "uploadTime"} |
-| 게시글 수정    | PUT    | api/posts/{id}   | {"title": "modified title", "contents": "modified contents"} | {"title": "title 1", "username": "username", "contents": " contents 1", "uploadTime": "uploadTime"} |
-| 게시글 삭제    | DELETE | api/posts/{id}   |                                                              | {"statusCode": 200,"responseMessage": "delete success"}                                             |
+| 특정 게시글 조회 | GET    | /api/posts/{id}  |                                                              | {"title": "title 1", "username": "username", "contents": " contents 1", "uploadTime": "uploadTime"} |
+| 게시글 작성    | POST   | /api/posts       | {"title" : "title", "contents" : "contents"}                 | {"title": "title 1", "username": "username", "contents": " contents 1", "uploadTime": "uploadTime"} |
+| 게시글 수정    | PUT    | /api/posts/{id}  | {"title": "modified title", "contents": "modified contents"} | {"title": "title 1", "username": "username", "contents": " contents 1", "uploadTime": "uploadTime"} |
+| 게시글 삭제    | DELETE | /api/posts/{id}  |                                                              | {"statusCode": 200,"responseMessage": "delete success"}                                             |
 
 ### ERD 설계도
 
@@ -55,8 +55,11 @@
 4. 반대로 JWT를 사용한 인증/인가의 한계점은 무엇일까요?
     - seceret key가 말 그대로 아킬레스이기도 하다는 점입니다. seceret key가 노출당하면 정말 외부에서 서버 내 DB의 대부분의 정보에 접근할 수 있게 됩니다.
 5. 만약 댓글 기능이 있는 블로그에서 댓글이 달려있는 게시글을 삭제하려고 한다면 무슨 문제가 발생할까요? Database 테이블 관점에서 해결방법이 무엇일까요?
-    - 게시글은 사라졌는데 해당 게시글과 연결되어 있는 댓글들은 아직 사라지지 않은 상태이기 때문에 여전히 서버의 리소스를 잡아먹는 상태로 남게 되고, 댓글이 화면 상에 나타날 일도 없어 이를 방치하게 될 가능성이 높습니다.
+    - 게시글은 사라졌는데 해당 게시글과 연결되어 있는 댓글들은 아직 사라지지 않은 상태이기 때문에 여전히 서버의 리소스를 잡아먹는 상태로 남게 되고, 댓글이 화면 상에 나타날 일도 없어 이를 방치하게 될
+      가능성이 높습니다.
     - Database 테이블 관점에서, 삭제할 때 해당 게시글 자체를 댓글들의 외부 키로 갖고 있도록 한 후, 이 키가 일치하는 댓글을 모두 같이 삭제하도록 하면 되지 않을까 생각합니다.
 6. IoC / DI 에 대해 간략하게 설명해 주세요!
-    - DI : 의존성 주입이란 하나의 객체가 다른 객체의 의존성을 제공하는 기술입니다. 즉 어떠한 객체가 생성되거나 안에 다른 객체를 참조하고 있는 경우 의존성이 주입된 것이라고 할 수 있습니다.의존성 주입의 방법에는 생성자 주입 / 필드 주입 / 수정자 주입이 있습니다.
-    - IoC : 제어 역전의 개념은 전통적인 프로그래밍에서 보통 라이브러리나 프레임워크의 기능을 프로그래머가 호출해 와서 제어 흐름을 형성하는 것이 일반적이지만, 제어 역전은 프레임 워크나 라이브러리에서 프로그래머의 코드를 호출해 와 제어 흐름의 주도권을 가져갑니다.
+    - DI : 의존성 주입이란 하나의 객체가 다른 객체의 의존성을 제공하는 기술입니다. 즉 어떠한 객체가 생성되거나 안에 다른 객체를 참조하고 있는 경우 의존성이 주입된 것이라고 할 수 있습니다.의존성 주입의
+      방법에는 생성자 주입 / 필드 주입 / 수정자 주입이 있습니다.
+    - IoC : 제어 역전의 개념은 전통적인 프로그래밍에서 보통 라이브러리나 프레임워크의 기능을 프로그래머가 호출해 와서 제어 흐름을 형성하는 것이 일반적이지만, 제어 역전은 프레임 워크나 라이브러리에서
+      프로그래머의 코드를 호출해 와 제어 흐름의 주도권을 가져갑니다.
