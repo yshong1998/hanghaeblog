@@ -1,12 +1,12 @@
 package com.sparta.hanghaeblog.Dto;
 
-import com.sparta.hanghaeblog.entitiy.Message;
 import com.sparta.hanghaeblog.entitiy.Post;
 import lombok.Getter;
 
 @Getter
 public class PostResponseDto {
     private final String title;
+    private final String username;
     private final String contents;
     private final String uploadTime;
 
@@ -14,5 +14,6 @@ public class PostResponseDto {
         this.title = post.getTitle();
         this.contents = post.getContents();
         this.uploadTime = post.getCreatedAt().toString();
+        this.username = post.getUser().getUsername();
     }
 }

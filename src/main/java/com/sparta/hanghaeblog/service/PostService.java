@@ -32,31 +32,18 @@ public class PostService {
     @Transactional
     public ResponseEntity<PostResponseDto> createPost(PostRequestDto requestDto, HttpServletRequest request) {
         String token = jwtUtil.resolveToken(request);
-        Claims claims;
-
-        if (token != null) {
-            if (jwtUtil.validateToken(token)) {
-                claims = jwtUtil.getUserInfoFromToken(token);
-            } else {
-                throw new IllegalArgumentException("Token Error");
-            }
-
-            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
-            );
-            Post post = postRepository.saveAndFlush(new Post(requestDto, user));
-            return ResponseEntity.ok()
-                    .body(new PostResponseDto(post));
-        }
-        return null;
+        checkTokenNull(token);
+        Claims claims = getTokenClaims(token);
+        User user = findUserByTokenClaims(claims);
+        Post post = postRepository.saveAndFlush(new Post(requestDto, user));
+        return ResponseEntity.ok()
+                .body(new PostResponseDto(post));
     }
-
 
     //전체 게시글 조회
     @Transactional(readOnly = true)
     public ResponseEntity<List<PostResponseDto>> getPosts() {
-        List<Post> postList = postRepository.findAllByOrderByModifiedAtDesc(); //이건 필요 없긴 하다 저 아래에서 2개 이상이 찾아지면 알아서 컬렉션 List로 반환하기 때문
-//         return postRepository.findAll(); // 이러면 그냥 postRepository 안의 모든 메모 불러오기고, 시간 내림차순으로 불러오게 해 보자 이건 postRepository에서 해 주면 된다.
+        List<Post> postList = postRepository.findAllByOrderByModifiedAtDesc();
         List<PostResponseDto> responseDtoList = new ArrayList<>();
         for (Post post : postList){
             responseDtoList.add(new PostResponseDto(post));
@@ -78,53 +65,56 @@ public class PostService {
     //게시글 수정
     @Transactional
     public ResponseEntity<PostResponseDto> update(Long id, PostRequestDto requestDto, HttpServletRequest request) {
-
         String token = jwtUtil.resolveToken(request);
-        Claims claims;
-
-        if (token != null) {
-            if (jwtUtil.validateToken(token)) {
-                claims = jwtUtil.getUserInfoFromToken(token);
-            } else {
-                throw new IllegalArgumentException("Token Error");
-            }
-            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
-            );
-            Post post = postRepository.findById(id).orElseThrow(
-                    () -> new IllegalArgumentException("존재하지 않는 게시글입니다.")
-            );
-            post.update(requestDto);
-
-            return ResponseEntity.ok()
-                    .body(new PostResponseDto(post));
-        }
-        return null;
+        checkTokenNull(token);
+        Claims claims = getTokenClaims(token);
+        findUserByTokenClaims(claims);
+        Post post = getPostById(id);
+        post.update(requestDto);
+        return ResponseEntity.ok()
+                .body(new PostResponseDto(post));
     }
-
 
     //게시글 삭제
     @Transactional
     public ResponseEntity<Message> deletePost(Long id, HttpServletRequest request) {
         String token = jwtUtil.resolveToken(request);
-        Claims claims;
+        checkTokenNull(token);
+        Claims claims = getTokenClaims(token);
+        findUserByTokenClaims(claims);
+        Post post = getPostById(id);
+        postRepository.deleteById(post.getId());
+        return ResponseEntity.ok()
+                .body(new Message(HttpStatus.OK.value(),"delete success"));
+    }
 
-        if (token != null) {
-            if (jwtUtil.validateToken(token)) {
-                claims = jwtUtil.getUserInfoFromToken(token);
-            } else {
-                throw new IllegalArgumentException("Token Error");
-            }
-            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
-            );
-            Post post = postRepository.findById(id).orElseThrow(
-                    () -> new IllegalArgumentException("존재하지 않는 게시글입니다.")
-            );
-            postRepository.deleteById(post.getId());
-            return ResponseEntity.ok()
-                    .body(new Message(HttpStatus.OK.value(),"delete success"));
+    private void checkTokenNull(String token){
+        if(token == null){
+            throw new IllegalArgumentException("토큰이 존재하지 않습니다.");
         }
-        return null;
+    }
+
+    private Claims getTokenClaims(String token) {
+        Claims claims;
+        if (jwtUtil.validateToken(token)) {
+            claims = jwtUtil.getUserInfoFromToken(token);
+        } else {
+            throw new IllegalArgumentException("Token Error");
+        }
+        return claims;
+    }
+
+    private User findUserByTokenClaims(Claims claims) {
+        User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
+                () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+        );
+        return user;
+    }
+
+    private Post getPostById(Long id) {
+        Post post = postRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 게시글입니다.")
+        );
+        return post;
     }
 }
