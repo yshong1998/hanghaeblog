@@ -45,9 +45,8 @@ public class PostService {
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
             Post post = postRepository.saveAndFlush(new Post(requestDto, user));
-            PostResponseDto responseDto = new PostResponseDto(post);
             return ResponseEntity.ok()
-                    .body(responseDto);
+                    .body(new PostResponseDto(post));
         }
         return null;
     }

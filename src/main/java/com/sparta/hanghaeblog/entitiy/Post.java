@@ -27,6 +27,7 @@ public class Post extends Timestamped {
         this.title = requestDto.getTitle();
         this.contents = requestDto.getContents();
         this.user = user;
+        user.userPosts.add(this);
     }
 
     public void update(PostRequestDto requestDto) {
