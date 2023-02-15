@@ -26,19 +26,19 @@ public class PostController {
 
     //게시글 전체 조회
     @GetMapping("api/posts")
-    public List<PostResponseDto> getPosts(){
+    public ResponseEntity<List<PostResponseDto>>  getPosts(){
         return postService.getPosts();
     }
 
     //선택한 게시글 조회
     @GetMapping("api/posts/{id}")
-    public PostResponseDto getClickedPost(@PathVariable Long id){
+    public ResponseEntity<PostResponseDto>  getClickedPost(@PathVariable Long id){
         return postService.getPost(id);
     }
 
     //게시글 수정
     @PutMapping("api/posts/{id}")
-    public PostResponseDto updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto, HttpServletRequest request){
+    public ResponseEntity<PostResponseDto>  updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto, HttpServletRequest request){
         return postService.update(id, requestDto, request);
     }
 
