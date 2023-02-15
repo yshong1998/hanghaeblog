@@ -4,6 +4,7 @@ import com.sparta.hanghaeblog.Dto.LoginRequestDto;
 import com.sparta.hanghaeblog.Dto.SignupRequestDto;
 import com.sparta.hanghaeblog.entitiy.Message;
 import com.sparta.hanghaeblog.entitiy.User;
+import com.sparta.hanghaeblog.entitiy.UserRoleEnum;
 import com.sparta.hanghaeblog.jwt.JwtUtil;
 import com.sparta.hanghaeblog.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,16 +21,18 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
+    private static final String ADMIN_TOKEN = "yshong1998Token";
 
     @Transactional
     public ResponseEntity<Message> signup(SignupRequestDto requestDto) {
         User user = new User(requestDto);
-        //중복 검사
+        if(requestDto.getAdminToken().equals(ADMIN_TOKEN)){
+            user.setRole(UserRoleEnum.ADMIN);
+        }
         Optional<User> found = userRepository.findByUsername(user.getUsername());
         if (found.isPresent()) {
             throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
         }
-        //중복 없으면 회원 가입
         userRepository.save(user);
         return ResponseEntity.ok()
                 .body(new Message(HttpStatus.OK.value(), "signup success"));

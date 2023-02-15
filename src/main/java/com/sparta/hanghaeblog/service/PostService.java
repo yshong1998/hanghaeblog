@@ -5,6 +5,7 @@ import com.sparta.hanghaeblog.Dto.PostResponseDto;
 import com.sparta.hanghaeblog.entitiy.Message;
 import com.sparta.hanghaeblog.entitiy.Post;
 import com.sparta.hanghaeblog.entitiy.User;
+import com.sparta.hanghaeblog.entitiy.UserRoleEnum;
 import com.sparta.hanghaeblog.jwt.JwtUtil;
 import com.sparta.hanghaeblog.repository.PostRepository;
 
@@ -45,7 +46,7 @@ public class PostService {
     public ResponseEntity<List<PostResponseDto>> getPosts() {
         List<Post> postList = postRepository.findAllByOrderByModifiedAtDesc();
         List<PostResponseDto> responseDtoList = new ArrayList<>();
-        for (Post post : postList){
+        for (Post post : postList) {
             responseDtoList.add(new PostResponseDto(post));
         }
         return ResponseEntity.ok()
@@ -54,7 +55,7 @@ public class PostService {
 
     //선택 게시글 조회
     @Transactional
-    public ResponseEntity<PostResponseDto>  getPost(Long id) {
+    public ResponseEntity<PostResponseDto> getPost(Long id) {
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 게시물입니다.")
         );
@@ -68,9 +69,11 @@ public class PostService {
         String token = jwtUtil.resolveToken(request);
         checkTokenNull(token);
         Claims claims = getTokenClaims(token);
-        findUserByTokenClaims(claims);
+        User user = findUserByTokenClaims(claims);
         Post post = getPostById(id);
-        post.update(requestDto);
+        if (user.getRole().equals(UserRoleEnum.ADMIN) || user.getId().equals(post.getUser().getId())) {
+            post.update(requestDto);
+        }
         return ResponseEntity.ok()
                 .body(new PostResponseDto(post));
     }
@@ -81,15 +84,17 @@ public class PostService {
         String token = jwtUtil.resolveToken(request);
         checkTokenNull(token);
         Claims claims = getTokenClaims(token);
-        findUserByTokenClaims(claims);
+        User user = findUserByTokenClaims(claims);
         Post post = getPostById(id);
-        postRepository.deleteById(post.getId());
+        if (user.getRole().equals(UserRoleEnum.ADMIN) || user.getId().equals(post.getUser().getId())) {
+            postRepository.deleteById(post.getId());
+        }
         return ResponseEntity.ok()
-                .body(new Message(HttpStatus.OK.value(),"delete success"));
+                .body(new Message(HttpStatus.OK.value(), "delete success"));
     }
 
-    private void checkTokenNull(String token){
-        if(token == null){
+    private void checkTokenNull(String token) {
+        if (token == null) {
             throw new IllegalArgumentException("토큰이 존재하지 않습니다.");
         }
     }
@@ -105,16 +110,14 @@ public class PostService {
     }
 
     private User findUserByTokenClaims(Claims claims) {
-        User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
+        return userRepository.findByUsername(claims.getSubject()).orElseThrow(
                 () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
         );
-        return user;
     }
 
     private Post getPostById(Long id) {
-        Post post = postRepository.findById(id).orElseThrow(
+        return postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 게시글입니다.")
         );
-        return post;
     }
 }

@@ -24,11 +24,20 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UserRoleEnum role;
+
     @OneToMany
     List<Post> userPosts = new ArrayList<>();
 
     public User(SignupRequestDto signupRequestDto){
         username = signupRequestDto.getUsername();
         password = signupRequestDto.getPassword();
+        role = UserRoleEnum.USER;
+    }
+
+    public void setRole(UserRoleEnum role){
+        this.role = role;
     }
 }
