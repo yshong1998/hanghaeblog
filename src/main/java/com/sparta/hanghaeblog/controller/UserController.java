@@ -18,6 +18,7 @@ public class UserController {
 
     private final UserService userService;
 
+
     @PostMapping("/signup")
     public Message signup(@Valid @RequestBody SignupRequestDto requestDto) {
         return userService.signup(requestDto);

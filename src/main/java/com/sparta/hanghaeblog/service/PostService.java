@@ -12,6 +12,8 @@ import com.sparta.hanghaeblog.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +30,7 @@ public class PostService {
 
     //게시글 작성
     @Transactional
-    public PostResponseDto createPost(PostRequestDto requestDto, HttpServletRequest request) {
+    public ResponseEntity<PostResponseDto> createPost(PostRequestDto requestDto, HttpServletRequest request) {
         String token = jwtUtil.resolveToken(request);
         Claims claims;
 
@@ -43,7 +45,10 @@ public class PostService {
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
             Post post = postRepository.saveAndFlush(new Post(requestDto, user));
-            return new PostResponseDto(post);
+            Message message = new Message(HttpStatus.OK.value(),"success");
+            PostResponseDto responseDto = new PostResponseDto(post,message);
+            return ResponseEntity.ok()
+                    .body(responseDto);
         }
         return null;
     }
@@ -83,7 +88,6 @@ public class PostService {
             } else {
                 throw new IllegalArgumentException("Token Error");
             }
-
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
@@ -99,7 +103,7 @@ public class PostService {
 
     //게시글 삭제
     @Transactional
-    public Message deletePost(HttpServletRequest request) {
+    public ResponseEntity<Message> deletePost(HttpServletRequest request) {
         String token = jwtUtil.resolveToken(request);
         Claims claims;
 
@@ -117,7 +121,8 @@ public class PostService {
                     () -> new IllegalArgumentException("존재하지 않는 게시글입니다.")
             );
             postRepository.deleteById(post.getId());
-            return new Message(200,"delete success");
+            return ResponseEntity.ok()
+                    .body(new Message(HttpStatus.OK.value(),"delete success"));
         }
         return null;
     }

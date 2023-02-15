@@ -7,6 +7,7 @@ import com.sparta.hanghaeblog.entitiy.Message;
 import com.sparta.hanghaeblog.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class PostController {
 
     //게시글 작성
     @PostMapping("api/posts")
-    public PostResponseDto createPost(@RequestBody PostRequestDto requestDto, HttpServletRequest request) {
+    public ResponseEntity<PostResponseDto> createPost(@RequestBody PostRequestDto requestDto, HttpServletRequest request) {
         return postService.createPost(requestDto, request);
     }
 
@@ -28,6 +29,7 @@ public class PostController {
     public List<PostResponseDto> getPosts(){
         return postService.getPosts();
     }
+
     //선택한 게시글 조회
     @GetMapping("api/posts/{id}")
     public PostResponseDto getClickedPost(@PathVariable Long id){
@@ -42,7 +44,7 @@ public class PostController {
 
     //게시글 삭제
     @DeleteMapping("/api/posts")
-    public Message deletePost(HttpServletRequest request){
+    public ResponseEntity<Message> deletePost(HttpServletRequest request){
         return postService.deletePost(request);
     }
 }

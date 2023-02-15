@@ -11,34 +11,26 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Post extends Timestamped {
 
-    @Id // PersonalKey이다.
+    @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long Id;
 
     @Column(nullable = false)
     private String title;
     @Column(nullable = false)
-    private String writer;
-    @Column(nullable = false)
     private String contents;
-    @Column(nullable = false)
-    private String password;
     @ManyToOne
     @JoinColumn(name = "USER_ID", nullable = false)
     private User user;
 
     public Post(PostRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();
-        this.writer = requestDto.getWriter();
         this.contents = requestDto.getContents();
-        this.password = requestDto.getPassword();
         this.user = user;
     }
 
     public void update(PostRequestDto requestDto) {
         this.title = requestDto.getTitle();
-        this.writer = requestDto.getWriter();
         this.contents = requestDto.getContents();
-        this.password = requestDto.getPassword();
     }
 }
