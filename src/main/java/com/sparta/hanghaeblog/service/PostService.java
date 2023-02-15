@@ -2,10 +2,7 @@ package com.sparta.hanghaeblog.service;
 
 import com.sparta.hanghaeblog.Dto.PostRequestDto;
 import com.sparta.hanghaeblog.Dto.PostResponseDto;
-import com.sparta.hanghaeblog.entitiy.Message;
-import com.sparta.hanghaeblog.entitiy.Post;
-import com.sparta.hanghaeblog.entitiy.User;
-import com.sparta.hanghaeblog.entitiy.UserRoleEnum;
+import com.sparta.hanghaeblog.entitiy.*;
 import com.sparta.hanghaeblog.jwt.JwtUtil;
 import com.sparta.hanghaeblog.repository.PostRepository;
 
@@ -19,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+
 import java.util.List;
 
 @Service
@@ -35,7 +33,7 @@ public class PostService {
         String token = jwtUtil.resolveToken(request);
         Claims claims = jwtUtil.getTokenClaims(token);
         User user = findUserByTokenClaims(claims);
-        Post post = postRepository.saveAndFlush(new Post(requestDto, user));
+        Post post = postRepository.saveAndFlush(new Post(requestDto,user));
         return ResponseEntity.ok()
                 .body(new PostResponseDto(post));
     }

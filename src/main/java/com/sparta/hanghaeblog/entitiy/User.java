@@ -7,9 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 @Getter
 @Setter
@@ -27,8 +25,6 @@ public class User {
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
-    @OneToMany
-    List<Post> userPosts = new ArrayList<>();
     @OneToMany(mappedBy = "user")
     private Collection<Post> post;
     @OneToMany(mappedBy = "user")

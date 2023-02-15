@@ -10,9 +10,11 @@ import com.sparta.hanghaeblog.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +31,7 @@ public class CommentService {
         User user = findUserByTokenClaims(claims); // Claims 안에 있는 username으로 user를 찾아 저장한다. (없으면 예외 처리됨)
         Post post = findPostByPostId(postId); // pathvariable로 받아 왔던 게시글의 id를 통해 게시글 찾는다
         Comment comment = commentRepository.saveAndFlush(new Comment(requestDto, user, post)); // 코멘트를 생성하고 저장한다.
+        System.out.println(comment.getPost().getTitle());
         return ResponseEntity.ok()
                 .body(new CommentResponseDto(comment));
     }

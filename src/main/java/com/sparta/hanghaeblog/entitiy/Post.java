@@ -3,11 +3,11 @@ package com.sparta.hanghaeblog.entitiy;
 
 import com.sparta.hanghaeblog.Dto.PostRequestDto;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Getter
 @Setter
@@ -25,15 +25,14 @@ public class Post extends Timestamped {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Comment> comment = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post")
-    private Collection<Comment> comment;
 
-    public Post(PostRequestDto requestDto, User user) {
+    public Post(PostRequestDto requestDto,User user) {
         this.title = requestDto.getTitle();
         this.contents = requestDto.getContents();
         this.user = user;
-        user.userPosts.add(this);
     }
 
     public void update(PostRequestDto requestDto) {
