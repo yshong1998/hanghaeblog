@@ -7,6 +7,7 @@ import com.sparta.hanghaeblog.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -20,12 +21,12 @@ public class UserController {
 
 
     @PostMapping("/signup")
-    public Message signup(@Valid @RequestBody SignupRequestDto requestDto) {
+    public ResponseEntity<Message> signup(@Valid @RequestBody SignupRequestDto requestDto) {
         return userService.signup(requestDto);
     }
 
     @PostMapping("/login")
-    public Message login(@Valid @RequestBody LoginRequestDto requestDto, HttpServletResponse response){
+    public ResponseEntity<Message> login(@Valid @RequestBody LoginRequestDto requestDto, HttpServletResponse response){
         return userService.login(requestDto, response);
     }
 }

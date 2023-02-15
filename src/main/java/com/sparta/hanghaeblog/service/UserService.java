@@ -9,6 +9,7 @@ import com.sparta.hanghaeblog.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +22,7 @@ public class UserService {
     private final JwtUtil jwtUtil;
 
     @Transactional
-    public Message signup(SignupRequestDto requestDto) {
+    public ResponseEntity<Message> signup(SignupRequestDto requestDto) {
         User user = new User(requestDto);
         //중복 검사
         Optional<User> found = userRepository.findByUsername(user.getUsername());
@@ -30,11 +31,12 @@ public class UserService {
         }
         //중복 없으면 회원 가입
         userRepository.save(user);
-        return new Message(HttpStatus.OK.value(), "signup success");
+        return ResponseEntity.ok()
+                .body(new Message(HttpStatus.OK.value(), "signup success"));
     }
 
     @Transactional
-    public Message login(LoginRequestDto requestDto, HttpServletResponse response) {
+    public ResponseEntity<Message> login(LoginRequestDto requestDto, HttpServletResponse response) {
         String username = requestDto.getUsername();
         String password = requestDto.getPassword();
 
@@ -46,6 +48,7 @@ public class UserService {
         }
 
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername()));
-        return new Message(HttpStatus.OK.value(), "login success");
+        return ResponseEntity.ok()
+                .body(new Message(HttpStatus.OK.value(), "login success"));
     }
 }
