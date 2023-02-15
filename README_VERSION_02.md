@@ -36,7 +36,7 @@
 
 ### ERD 설계도
 
-<img width="80%" src="https://user-images.githubusercontent.com/106438992/218939259-92c52df9-2aa4-4e99-9fff-9a9bdc93ed2f.png"/>
+<img width="80%" src="https://user-images.githubusercontent.com/106438992/218947231-878306fb-3071-4094-8f3f-1c22ae6bd2cc.png"/>
 
 ### 유스케이스 다이어그램
 
