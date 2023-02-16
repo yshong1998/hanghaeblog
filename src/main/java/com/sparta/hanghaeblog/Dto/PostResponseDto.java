@@ -5,6 +5,7 @@ import com.sparta.hanghaeblog.entitiy.Post;
 import lombok.Getter;
 
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -13,14 +14,14 @@ public class PostResponseDto {
     private final String title;
     private final String username;
     private final String contents;
-    private final String uploadTime;
-    private List<CommentResponseDto> commentList;
+    private final LocalDateTime uploadTime;
+    private final List<CommentResponseDto> commentList;
 
     public PostResponseDto(Post post) {
         this.title = post.getTitle();
         this.contents = post.getContents();
-        this.uploadTime = post.getCreatedAt().toString();
+        this.uploadTime = post.getCreatedAt();
         this.username = post.getUser().getUsername();
-        this.commentList = post.getComment().stream().map(CommentResponseDto::new).toList();
+        this.commentList = post.getComment().stream().map(CommentResponseDto::new).sorted(CommentResponseDto::compareTo).toList();
     }
 }

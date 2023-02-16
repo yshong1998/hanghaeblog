@@ -26,7 +26,6 @@ public class PostService {
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
 
-
     //게시글 작성
     @Transactional
     public ResponseEntity<PostResponseDto> createPost(PostRequestDto requestDto, HttpServletRequest request) {
@@ -56,8 +55,9 @@ public class PostService {
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 게시물입니다.")
         );
+        PostResponseDto responseDto = new PostResponseDto(post);
         return ResponseEntity.ok()
-                .body(new PostResponseDto(post));
+                .body(responseDto);
     }
 
     //게시글 수정
