@@ -1,7 +1,5 @@
 package com.sparta.hanghaeblog.entitiy;
 
-
-import com.sparta.hanghaeblog.Dto.SignupRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +20,8 @@ public class User {
     private String username;
     @Column(nullable = false)
     private String password;
+    @Column(nullable = false, unique = true)
+    private String email;
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
@@ -30,15 +30,11 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Collection<Comment> comment;
 
-    public User(SignupRequestDto signupRequestDto){
-        username = signupRequestDto.getUsername();
-        password = signupRequestDto.getPassword();
-        role = UserRoleEnum.USER;
-    }
-
-    public void setRole(UserRoleEnum role){
+    public User(String username, String password, String email, UserRoleEnum role){
+        this.username = username;
+        this.password = password;
+        this.email = email;
         this.role = role;
     }
-
 
 }

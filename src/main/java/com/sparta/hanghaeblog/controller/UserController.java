@@ -7,6 +7,7 @@ import com.sparta.hanghaeblog.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,11 +23,15 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<Message> signup(@Valid @RequestBody SignupRequestDto requestDto) {
-        return userService.signup(requestDto);
+        userService.signup(requestDto);
+        return ResponseEntity.ok()
+                .body(new Message(HttpStatus.OK.value(), "signup success"));
     }
 
     @PostMapping("/login")
     public ResponseEntity<Message> login(@Valid @RequestBody LoginRequestDto requestDto, HttpServletResponse response){
-        return userService.login(requestDto, response);
+        userService.login(requestDto, response);
+        return ResponseEntity.ok()
+                .body(new Message(HttpStatus.OK.value(), "login success"));
     }
 }
