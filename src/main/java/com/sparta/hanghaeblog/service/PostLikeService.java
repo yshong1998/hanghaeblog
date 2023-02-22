@@ -3,6 +3,8 @@ package com.sparta.hanghaeblog.service;
 import com.sparta.hanghaeblog.entitiy.Post;
 import com.sparta.hanghaeblog.entitiy.PostLike;
 import com.sparta.hanghaeblog.entitiy.User;
+import com.sparta.hanghaeblog.exception.ErrorCode;
+import com.sparta.hanghaeblog.exception.RestApiException;
 import com.sparta.hanghaeblog.repository.PostLikeRepository;
 import com.sparta.hanghaeblog.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +22,7 @@ public class PostLikeService {
     @Transactional
     public void switchLikeOrNot(Long postId, User user) {
         Post post = postRepository.findById(postId).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 게시글입니다.")
+                () -> new RestApiException(ErrorCode.POST_NOT_EXIST)
         );
         Optional<PostLike> postLike = postLikeRepository.findByPostAndUser(post, user);
         if(postLike.isEmpty()){

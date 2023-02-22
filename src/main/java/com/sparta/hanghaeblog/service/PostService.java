@@ -3,6 +3,8 @@ package com.sparta.hanghaeblog.service;
 import com.sparta.hanghaeblog.Dto.PostRequestDto;
 import com.sparta.hanghaeblog.Dto.PostResponseDto;
 import com.sparta.hanghaeblog.entitiy.*;
+import com.sparta.hanghaeblog.exception.ErrorCode;
+import com.sparta.hanghaeblog.exception.RestApiException;
 import com.sparta.hanghaeblog.repository.PostRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -45,9 +47,7 @@ public class PostService {
     //선택 게시글 조회
     @Transactional(readOnly = true)
     public ResponseEntity<PostResponseDto> getPost(Long id) {
-        Post post = postRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 게시물입니다.")
-        );
+        Post post = getPostById(id);
         PostResponseDto responseDto = new PostResponseDto(post);
         return ResponseEntity.ok()
                 .body(responseDto);
@@ -60,7 +60,7 @@ public class PostService {
         if (user.getRole().equals(UserRoleEnum.ADMIN) || user.getId().equals(post.getUser().getId())) {
             post.update(requestDto);
         } else {
-            throw new IllegalArgumentException("권한이 없습니다.");
+            throw new RestApiException(ErrorCode.USER_UNMATCHED);
         }
         postRepository.flush();
         return ResponseEntity.ok()
@@ -74,7 +74,7 @@ public class PostService {
         if (user.getRole().equals(UserRoleEnum.ADMIN) || user.getId().equals(post.getUser().getId())) {
             postRepository.deleteById(post.getId());
         } else {
-            throw new IllegalArgumentException("권한이 없습니다.");
+            throw new RestApiException(ErrorCode.USER_UNMATCHED);
         }
         return ResponseEntity.ok()
                 .body(new Message(HttpStatus.OK.value(), "delete success"));
@@ -82,7 +82,7 @@ public class PostService {
 
     private Post getPostById(Long id) {
         return postRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 게시글입니다.")
+                () -> new RestApiException(ErrorCode.POST_NOT_EXIST)
         );
     }
 }

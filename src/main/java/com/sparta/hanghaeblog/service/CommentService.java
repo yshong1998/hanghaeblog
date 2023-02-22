@@ -3,6 +3,8 @@ package com.sparta.hanghaeblog.service;
 import com.sparta.hanghaeblog.Dto.CommentRequestDto;
 import com.sparta.hanghaeblog.Dto.CommentResponseDto;
 import com.sparta.hanghaeblog.entitiy.*;
+import com.sparta.hanghaeblog.exception.ErrorCode;
+import com.sparta.hanghaeblog.exception.RestApiException;
 import com.sparta.hanghaeblog.repository.CommentRepository;
 import com.sparta.hanghaeblog.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +35,7 @@ public class CommentService {
         if(user.getRole().equals(UserRoleEnum.ADMIN)||user.getRole().equals(comment.getUser().getRole())){
             comment.update(requestDto);
         } else {
-            throw new IllegalArgumentException("권한이 없습니다.");
+            throw new RestApiException(ErrorCode.USER_UNMATCHED);
         }
         commentRepository.flush();
         return ResponseEntity.ok()
@@ -51,13 +53,13 @@ public class CommentService {
     }
     private Comment findCommentByCommentId(Long commentIndex) {
         return commentRepository.findById(commentIndex).orElseThrow(
-                () -> new IllegalArgumentException("댓글이 존재하지 않습니다.")
+                () -> new RestApiException(ErrorCode.COMMENT_NOT_EXIST)
         );
     }
 
     private Post findPostByPostId(Long postIndex) {
         return postRepository.findById(postIndex).orElseThrow(
-                () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
+                () -> new RestApiException(ErrorCode.POST_NOT_EXIST)
         );
     }
 

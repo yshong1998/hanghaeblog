@@ -4,7 +4,6 @@ import com.sparta.hanghaeblog.Dto.LoginRequestDto;
 import com.sparta.hanghaeblog.Dto.SignupRequestDto;
 import com.sparta.hanghaeblog.entitiy.Message;
 import com.sparta.hanghaeblog.service.UserService;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,9 +28,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Message> login(@Valid @RequestBody LoginRequestDto requestDto, HttpServletResponse response){
-        userService.login(requestDto, response);
-        return ResponseEntity.ok()
-                .body(new Message(HttpStatus.OK.value(), "login success"));
+    public ResponseEntity<Message> login(@RequestBody LoginRequestDto requestDto){
+        return userService.login(requestDto);
     }
 }

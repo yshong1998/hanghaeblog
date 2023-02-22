@@ -15,11 +15,11 @@
 2. 댓글 좋아요 기능 추가
     - [x] 이미 좋아요를 누른 사용자라면 다시 요청을 보냈을 때 좋아요가 취소되도록 구현
 3. AOP를 이용해 예외 처리 구현
-   - [ ] 토큰이 필요한 요청에서 토큰이 없거나 정상이 아닐 경우 에러 메세지와 statusCode: 400 반환   
-   - [ ] 토큰이 있고 유효한 토큰이지만 해당 사용자가 작성한 게시글이 아닐 경우 에러 메세지와 statusCode: 400 반환   
-   - [ ] DB에 이미 존재하는 username으로 회원가입 요청시 에러 메시지와 statusCode: 400 반환   
-   - [ ] 로그인 시 username과 password중 맞지 않는 정보가 있다면 에러 메세지와 statusCode: 400 반환   
-   - [ ] 회원 가입 시 username과 password의 구성이 알맞지 않으면 에러메시지와 statusCode: 400 반환
+   - [x] 토큰이 필요한 요청에서 토큰이 없거나 정상이 아닐 경우 에러 메세지와 statusCode: 400 반환   
+   - [x] 토큰이 있고 유효한 토큰이지만 해당 사용자가 작성한 게시글이 아닐 경우 에러 메세지와 statusCode: 400 반환   
+   - [x] DB에 이미 존재하는 username으로 회원가입 요청시 에러 메시지와 statusCode: 400 반환   
+   - [x] 로그인 시 username과 password중 맞지 않는 정보가 있다면 에러 메세지와 statusCode: 400 반환   
+   - [x] 회원 가입 시 username과 password의 구성이 알맞지 않으면 에러메시지와 statusCode: 400 반환
    
 
 

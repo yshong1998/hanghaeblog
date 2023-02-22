@@ -2,12 +2,17 @@ package com.sparta.hanghaeblog.service;
 
 import com.sparta.hanghaeblog.Dto.LoginRequestDto;
 import com.sparta.hanghaeblog.Dto.SignupRequestDto;
+import com.sparta.hanghaeblog.entitiy.Message;
 import com.sparta.hanghaeblog.entitiy.User;
 import com.sparta.hanghaeblog.entitiy.UserRoleEnum;
+import com.sparta.hanghaeblog.exception.ErrorCode;
+import com.sparta.hanghaeblog.exception.RestApiException;
 import com.sparta.hanghaeblog.jwt.JwtUtil;
 import com.sparta.hanghaeblog.repository.UserRepository;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,11 +36,11 @@ public class UserService {
 
         Optional<User> found = userRepository.findByUsername(username);
         if (found.isPresent()) {
-            throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
+            throw new RestApiException(ErrorCode.USER_NAME_EXIST);
         }
         if(requestDto.isAdmin()){
             if(!requestDto.getAdminToken().equals(ADMIN_TOKEN)){
-                throw new IllegalArgumentException("관리자 암호가 틀려 등록이 불가능합니다.");
+                throw new RestApiException(ErrorCode.ADMIN_PASSWORD_UNMATCHED);
             }
             role = UserRoleEnum.ADMIN;
         }
@@ -44,19 +49,21 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public void login(LoginRequestDto requestDto, HttpServletResponse response) {
+    public ResponseEntity<Message> login(LoginRequestDto requestDto) {
         String username = requestDto.getUsername();
         String password = requestDto.getPassword();
 
         User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new IllegalArgumentException("등록된 사용자가 아닙니다.")
+                () -> new RestApiException(ErrorCode.USER_NOT_FOUND)
         );
         if(!passwordEncoder.matches(password, user.getPassword())){
-            throw  new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new RestApiException(ErrorCode.PASSWORD_UNMATCHED);
         }
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername(), user.getRole()));
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(new Message(HttpStatus.OK.value(), "login success"));
 
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername(), user.getRole()));
     }
-
-
 }
