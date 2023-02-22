@@ -25,10 +25,12 @@ public class Post extends Timestamped {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private List<Comment> comment = new ArrayList<>();
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    private List<PostLike> postLikeList = new ArrayList<>();
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    private List<Comment> commentList = new ArrayList<>();
 
-
+    @Builder
     public Post(PostRequestDto requestDto,User user) {
         this.title = requestDto.getTitle();
         this.contents = requestDto.getContents();

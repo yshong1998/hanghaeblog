@@ -33,7 +33,7 @@ public class PostController {
 
     //선택한 게시글 조회
     @GetMapping("api/posts/{id}")
-    public ResponseEntity<PostResponseDto>  getClickedPost(@PathVariable Long id){
+    public ResponseEntity<PostResponseDto> getClickedPost(@PathVariable Long id){
         return postService.getPost(id);
     }
 

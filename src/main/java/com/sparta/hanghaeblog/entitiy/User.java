@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Collection;
 
 @Getter
 @Setter
@@ -25,10 +24,6 @@ public class User {
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
-    @OneToMany(mappedBy = "user")
-    private Collection<Post> post;
-    @OneToMany(mappedBy = "user")
-    private Collection<Comment> comment;
 
     public User(String username, String password, String email, UserRoleEnum role){
         this.username = username;
@@ -36,5 +31,4 @@ public class User {
         this.email = email;
         this.role = role;
     }
-
 }

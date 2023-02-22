@@ -55,6 +55,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String json = new ObjectMapper().writeValueAsString(new SecurityExceptionDto(statusCode, msg));
             response.getWriter().write(json);
         } catch (Exception e) {
+            System.out.println("여기서 에러 나는 중");
             log.error(e.getMessage());
         }
     }

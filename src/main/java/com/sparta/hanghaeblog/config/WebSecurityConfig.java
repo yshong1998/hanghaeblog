@@ -46,14 +46,12 @@ public class WebSecurityConfig {
         // 기본 설정인 Session 방식은 사용하지 않고 JWT 방식을 사용하기 위한 설정
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.authorizeRequests().requestMatchers("/api/user/**").permitAll()
-                .requestMatchers("/api/posts/**").permitAll()
-                .requestMatchers("/api/comment").permitAll()
+        http.authorizeRequests().requestMatchers("/api/**").permitAll()
                 .anyRequest().authenticated()
                 // Jwt 인증 인가를 사용하기 위한 설정
                 .and().addFilterBefore(new com.sparta.hanghaeblog.jwt.JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
-//        http.formLogin().loginPage("/api/user/login-page").permitAll();
+//        http.formLogin().permitAll();
 
 //        http.exceptionHandling().accessDeniedPage("/api/user/forbidden");
 

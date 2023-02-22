@@ -15,10 +15,12 @@ import java.util.ArrayList;
 
 import java.util.List;
 
+
 @Service
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
+
 
     //게시글 작성
     @Transactional
@@ -57,7 +59,10 @@ public class PostService {
         Post post = getPostById(id);
         if (user.getRole().equals(UserRoleEnum.ADMIN) || user.getId().equals(post.getUser().getId())) {
             post.update(requestDto);
+        } else {
+            throw new IllegalArgumentException("권한이 없습니다.");
         }
+        postRepository.flush();
         return ResponseEntity.ok()
                 .body(new PostResponseDto(post));
     }
@@ -68,6 +73,8 @@ public class PostService {
         Post post = getPostById(id);
         if (user.getRole().equals(UserRoleEnum.ADMIN) || user.getId().equals(post.getUser().getId())) {
             postRepository.deleteById(post.getId());
+        } else {
+            throw new IllegalArgumentException("권한이 없습니다.");
         }
         return ResponseEntity.ok()
                 .body(new Message(HttpStatus.OK.value(), "delete success"));

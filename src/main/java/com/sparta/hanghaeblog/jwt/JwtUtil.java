@@ -88,23 +88,6 @@ public class JwtUtil {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
 
-    public Claims getTokenClaims(String token) {
-        checkTokenNull(token);
-        Claims claims;
-        if (validateToken(token)) {
-            claims = getUserInfoFromToken(token);
-        } else {
-            throw new IllegalArgumentException("Token Error");
-        }
-        return claims;
-    }
-
-    private void checkTokenNull(String token) {
-        if (token == null) {
-            throw new IllegalArgumentException("토큰이 존재하지 않습니다.");
-        }
-    }
-
     public Authentication createAuthentication(String username) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
