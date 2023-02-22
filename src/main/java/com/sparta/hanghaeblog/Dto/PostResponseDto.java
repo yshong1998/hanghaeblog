@@ -16,7 +16,7 @@ public class PostResponseDto {
     private final String title;
     private final String username;
     private final String contents;
-    private final Integer like;
+    private final Integer postlike;
     private final LocalDateTime uploadTime;
     private final List<CommentResponseDto> commentList;
 
@@ -26,6 +26,6 @@ public class PostResponseDto {
         this.uploadTime = post.getCreatedAt();
         this.username = post.getUser().getUsername();
         this.commentList = post.getCommentList().stream().map(CommentResponseDto::new).sorted(CommentResponseDto::compareTo).toList();
-        this.like = post.getPostLikeList().size();
+        this.postlike = post.getPostLikeList().size();
     }
 }

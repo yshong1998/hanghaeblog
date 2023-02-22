@@ -19,7 +19,9 @@ public class PostLikeService {
 
     @Transactional
     public void switchLikeOrNot(Long postId, User user) {
-        Post post = getPostById(postId);
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 게시글입니다.")
+        );
         Optional<PostLike> postLike = postLikeRepository.findByPostAndUser(post, user);
         if(postLike.isEmpty()){
             postLikeRepository.save(new PostLike(post, user));
@@ -27,11 +29,5 @@ public class PostLikeService {
             postLikeRepository.delete(postLike.get());
             postLikeRepository.flush();
         }
-    }
-
-    private Post getPostById(Long id) {
-        return postRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 게시글입니다.")
-        );
     }
 }
